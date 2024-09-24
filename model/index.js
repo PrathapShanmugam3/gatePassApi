@@ -35,6 +35,16 @@ db.adminLogins=require('../model/Admin/adminLogins')(sequelize, DataTypes);
 
 db.visitor =require('../model/Security/visitor')(sequelize, DataTypes);
 
+db.otp=require('./commonModel/Otp')(sequelize, DataTypes);
+
+db.countryMaster=require('./commonModel/countryMaster')(sequelize, DataTypes);
+
+db.stateMaster=require('./commonModel/stateMaster')(sequelize, DataTypes);
+
+db.districtMaster=require('./commonModel/districtMaster')(sequelize, DataTypes);
+
+db.talukMaster=require('./commonModel/talukMaster')(sequelize, DataTypes);
+
 
 (async () => {
     await initializeDatabase();
