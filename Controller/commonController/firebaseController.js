@@ -1,6 +1,9 @@
 const bucket = require('../../DB_Config/fireBaseConfig');
 
+
 const UploadFile = async (req, res) => {
+  console.log(req.file.originalname);
+  
   try {
     const firebaseFileName = Date.now() + '-' + req.file.originalname;
     const file = bucket.file(firebaseFileName);
@@ -18,8 +21,88 @@ const UploadFile = async (req, res) => {
     const fileUrl = `https://storage.googleapis.com/${bucket.name}/${firebaseFileName}`;
     res.json({ message: 'File uploaded successfully', fileUrl });
   } catch (err) {
+    console.error('Error uploading file:', err);
+    if (err.code === 400) {
+      console.error('Invalid JWT Signature error:', err);
+      // Handle invalid JWT signature error specifically
+      res.status(401).json({ error: 'Invalid JWT signature' });
+    } else {
+      res.status(500).json({ error: err.message });
+    }
+  }
+};
+
+
+
+const DownloadFile = async (req, res) => {
+  try {
+    const { fileName } = req.body; // Get the file name from the request parameters
+    console.log(fileName);
+    
+    const file = bucket.file(fileName);
+
+    // Create a read stream for the file
+    const readStream = file.createReadStream();
+
+    // Set the appropriate headers for download
+    res.set({
+      'Content-Disposition': `attachment; filename=${fileName}`,
+      'Content-Type': 'application/octet-stream',
+    });
+
+    // Pipe the read stream to the response
+    readStream.pipe(res);
+
+    readStream.on('error', (err) => {
+      res.status(500).json({ error: err.message });
+    });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-module.exports = { UploadFile };
+
+
+const DeleteFile = async (req, res) => {
+  try {
+    const { fileName } = req.body; // Get the file name from the request parameters
+    const file = bucket.file(fileName);
+
+    // Delete the file
+    await file.delete();
+
+    res.json({ message: 'File deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+const UpdateFile = async (req, res) => {
+  try {
+    const { fileName } = req.body; // Get the file name from the request parameters
+    console.log('Updating file:', fileName);
+    
+    const file = bucket.file(fileName);
+
+    // Upload the new file data
+    await file.save(req.file.buffer, {
+      metadata: {
+        contentType: req.file.mimetype,
+      },
+    });
+
+    // Make the file publicly accessible (optional)
+    await file.makePublic();
+
+    const fileUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+    res.json({ message: 'File updated successfully', fileUrl });
+  } catch (err) {
+    console.error('Error updating file:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = { UploadFile, DownloadFile, DeleteFile ,UpdateFile};
+
+

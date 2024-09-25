@@ -1,9 +1,12 @@
+
+require('dotenv').config();
+
 module.exports={
-    HOST: 'smtp.gmail.com',
-    PORT: 587,
-    SECURE: false,
+    HOST: process.env.HOST,
+    PORT: process.env.PORT,
+    SECURE: process.env.SECURE,
     AUTH: {
-      USERNAME: 'prathapshanmugam5@gmail.com',
-      PASSWORD: 'hdlh hkrg lfby wkrb',
+      USERNAME: process.env.USERNAME,
+      PASSWORD: process.env.PASSWORD,
     }
 }

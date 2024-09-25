@@ -1,18 +1,19 @@
-// DB_Config/sequelize.js
+
 const mysql = require('../DB_Config/MysqlDB');
 const { Sequelize, DataTypes } = require('sequelize');
 const mysql2 = require('mysql2/promise'); // Import mysql2 to use promises
 
-const { DB, USER, PASSWORD, HOST, dialect } = mysql;
+const { DATABASE, USER, PASSWORD, HOST,PORT, dialect } = mysql;
 
 async function initializeDatabase() {
-    const connection = await mysql2.createConnection({ host: HOST, user: USER, password: PASSWORD });
-    await connection.query(`CREATE DATABASE IF NOT EXISTS ${DB} ;`);
+    const connection = await mysql2.createConnection({ host: HOST, user: USER, password: PASSWORD ,port:PORT});
+    await connection.query(`CREATE DATABASE IF NOT EXISTS ${DATABASE} ;`);
     await connection.end();
 }
 
-const sequelize = new Sequelize(DB, USER, PASSWORD, {
+const sequelize = new Sequelize(DATABASE, USER, PASSWORD, {
     host: HOST,
+    port: PORT,
     dialect: dialect,
 });
 

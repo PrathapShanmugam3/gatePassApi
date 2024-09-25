@@ -1,6 +1,8 @@
 
+require('dotenv').config();
+const PORT = process.env.APP_PORT;
 
-const express = require("express");
+const express = require('express');
 const app = express();
 
 const CronJob=require('./DB_Config/cronjob');
@@ -22,6 +24,6 @@ app.use("/mail",mailRouter);
 
 app.use("/customdata",commonRouter)
 
-app.listen(3000, () => {
-    console.log("Server is running on port 3000");
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
