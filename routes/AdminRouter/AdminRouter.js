@@ -19,7 +19,7 @@ Admin.post("/addDepartment", DepartmentController.addDepartment);
 Admin.post("/addEmployee", EmployeeController.upload.single('Photo'), EmployeeController.addEmployee);
 Admin.put("/UpdateEmployeeDetails/:id", EmployeeController.upload.single('Photo'), EmployeeController.UpdateEmployeeDetails);
 Admin.get("/getAllEmployees",EmployeeController.getAllEmployees);
-Admin.delete("/DeleteEmployeeDetails/:id",EmployeeController.DeleteEmployeeDetails);
+Admin.delete("/DeleteEmployeeDetails/:id/:fileName",EmployeeController.DeleteEmployeeDetails);
 Admin.get("/getAllEmployees/:id",EmployeeController.getEmployeesDetailsById);
 Admin.get("/getImageById/:id",EmployeeController.getImageById);
 

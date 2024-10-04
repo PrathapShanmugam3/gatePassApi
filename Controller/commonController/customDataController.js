@@ -44,7 +44,7 @@ const getDataFromDataCode = async (dataCodeDetails) => {
     return   { message: 'No data found' } ;
   }
 
-  return { result: data };
+  return { data: data };
 };
 
 // Route to handle the request

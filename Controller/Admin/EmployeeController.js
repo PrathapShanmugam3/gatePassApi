@@ -1,16 +1,26 @@
 const adminEmployeeModel = require('../../model').adminEmployeeMaster;
+const uploadImage=require('../commonController/firebaseController').UploadFile;
+const deleteFile=require('../commonController/firebaseController').DeleteFile;
+const DeleteFileByBody=require('../commonController/firebaseController').DeleteFileByBody;
+
 const multer = require('multer');
 
 
 const upload = multer();
 
 const addEmployee = async (req, res) => {
+
+    const response=await uploadImage(req);
+    console.log(response);
+    
+   
     try {
         const Photo = req.file ? req.file.buffer : null;
         let Employee = {
             EmployeeCode: req.body.EmployeeCode,
             EmployeeName: req.body.EmployeeName,
-            Photo: Photo,
+            Department:req.body.Department,
+            Photo: response.fileUrl,
             ContactNumber1: req.body.ContactNumber1,
             ContactNumber2: req.body.ContactNumber2,
             Email: req.body.Email,
@@ -26,22 +36,29 @@ const addEmployee = async (req, res) => {
 
 const UpdateEmployeeDetails = async (req, res) => {
     try {
+
+        console.log(req.body);
+        
+        const response1=await DeleteFileByBody(req);
+        console.log(response1);
+
+        const response=await uploadImage(req);
+        console.log(response);
+        
         const { id } = req.params;
-        const Photo = req.file ? req.file.buffer : null;
         const { EmployeeCode, EmployeeName, ContactNumber1, ContactNumber2, Email, AddressforCommunication } = req.body;
 
         let updateData = {
             EmployeeCode,
             EmployeeName,
             ContactNumber1,
+            Photo: response.fileUrl,
             ContactNumber2,
             Email,
             AddressforCommunication
         };
 
-        if (Photo) {
-            updateData.Photo = Photo;
-        }
+  
 
         await adminEmployeeModel.update(
             updateData,
@@ -69,7 +86,12 @@ const getAllEmployees = async (req, res) => {
 const DeleteEmployeeDetails=async(req,res)=>{
  
     const {id}=req.params;
+    console.log(req.params);
+    
+     const response=await deleteFile(req);
+        console.log(response);
 
+    
    
      await adminEmployeeModel.destroy({
         where: { id }

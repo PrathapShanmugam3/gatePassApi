@@ -10,8 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
         Photo: {
-            type: DataTypes.BLOB('long'),  // Use 'long' for larger BLOBs
-            allowNull: true
+            type: DataTypes.STRING
         },
         ContactNumber1: {
             type: DataTypes.STRING

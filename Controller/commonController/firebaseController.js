@@ -19,15 +19,15 @@ const UploadFile = async (req, res) => {
     await file.makePublic();
 
     const fileUrl = `https://storage.googleapis.com/${bucket.name}/${firebaseFileName}`;
-    res.json({ message: 'File uploaded successfully', fileUrl });
+    return { message: 'File uploaded successfully', fileUrl };
   } catch (err) {
     console.error('Error uploading file:', err);
     if (err.code === 400) {
       console.error('Invalid JWT Signature error:', err);
       // Handle invalid JWT signature error specifically
-      res.status(401).json({ error: 'Invalid JWT signature' });
+      return { error: 'Invalid JWT signature' };
     } else {
-      res.status(500).json({ error: err.message });
+      return { error: err.message };
     }
   }
 };
@@ -65,15 +65,31 @@ const DownloadFile = async (req, res) => {
 
 const DeleteFile = async (req, res) => {
   try {
+    const { fileName } = req.params; // Get the file name from the request parameters
+    const file = bucket.file(fileName);
+
+    // Delete the file
+    await file.delete();
+
+    return { message: 'File deleted successfully' };
+  } catch (err) {
+    return { error: err.message };
+  }
+};
+
+
+
+const DeleteFileByBody = async (req, res) => {
+  try {
     const { fileName } = req.body; // Get the file name from the request parameters
     const file = bucket.file(fileName);
 
     // Delete the file
     await file.delete();
 
-    res.json({ message: 'File deleted successfully' });
+    return { message: 'File deleted successfully' };
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return { error: err.message };
   }
 };
 
@@ -82,6 +98,8 @@ const UpdateFile = async (req, res) => {
   try {
     const { fileName } = req.body; // Get the file name from the request parameters
     console.log('Updating file:', fileName);
+
+
     
     const file = bucket.file(fileName);
 
@@ -96,13 +114,13 @@ const UpdateFile = async (req, res) => {
     await file.makePublic();
 
     const fileUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
-    res.json({ message: 'File updated successfully', fileUrl });
+    return { message: 'File updated successfully', fileUrl };
   } catch (err) {
     console.error('Error updating file:', err);
-    res.status(500).json({ error: err.message });
+    return { error: err.message };
   }
 };
 
-module.exports = { UploadFile, DownloadFile, DeleteFile ,UpdateFile};
+module.exports = { UploadFile, DownloadFile, DeleteFile ,UpdateFile,DeleteFileByBody};
 
 
